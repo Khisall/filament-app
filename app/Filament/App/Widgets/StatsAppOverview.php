@@ -2,28 +2,31 @@
 
 namespace App\Filament\App\Widgets;
 
-use App\Models\Maintenance;
-use App\Models\Report;
 use App\Models\Team;
+use App\Models\Report;
+use App\Models\Maintenance;
 use Filament\Facades\Filament;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Card;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class StatsAppOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $goodCount = Report::where('remark', 'Good')->count();
+        $warningCount = Report::where('remark', 'Warning')->count();
+        
         return [
-            Stat::make('Users', Team::find(Filament::getTenant())->first()->members->count())
-                ->description('All users from the database')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
+            Card::make('Warning Remarks', $warningCount)
+                ->description('Total Warning Remarks')
+                ->descriptionIcon('heroicon-o-exclamation-circle')
+                ->color('warning'),
+            Card::make('Good Remarks', $goodCount)
+                ->description('Total Good Remarks')
+                ->descriptionIcon('heroicon-o-check-circle')
                 ->color('success'),
-            Stat::make('Maintenances', Maintenance::query()->whereBelongsTo(Filament::getTenant())->count())
-                ->description('All teams from the database')
-                ->descriptionIcon('heroicon-m-arrow-trending-down')
-                ->color('success'),
-            Stat::make('Reports', Report::query()->whereBelongsTo(Filament::getTenant())->count())
+            Stat::make('Reports', Report::query()->count())
                 ->description('All reports from the database')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),

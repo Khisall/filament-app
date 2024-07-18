@@ -2,22 +2,22 @@
 
 namespace App\Filament\App\Widgets;
 
-use App\Models\Report;
-use Filament\Facades\Filament;
 use Filament\Tables;
+use App\Models\Report;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class LatestAppReports extends BaseWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 4;
+    protected int | string | array $columnSpan = 'full';
     public function table(Table $table): Table
     {
         return $table
             ->query(Report::query()->whereBelongsTo(Filament::getTenant()))
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('location.name'),
+                TextColumn::make('location.name'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('remark')
                     ->badge()
