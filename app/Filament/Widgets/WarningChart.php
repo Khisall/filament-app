@@ -3,19 +3,23 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
-use Filament\Widgets\ChartWidget;
+use App\Models\Report;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Filament\Widgets\ChartWidget;
 
-class UserAdminChart extends ChartWidget
+class WarningChart extends ChartWidget
 {
-    protected static ?string $heading = 'Users Chart';
+    protected static ?string $heading = 'Warning Chart';
 
     protected static ?int $sort = 2;
 
+    protected static string $color = 'warning';
+
     protected function getData(): array
     {
-        $data = Trend::model(User::class)
+        
+        $data = Trend::query(Report::where('remark', 'No Good'))
             ->between(
                 start: now()->startOfMonth(),
                 end: now()->endOfMonth(),
@@ -26,7 +30,7 @@ class UserAdminChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Users',
+                    'label' => 'No Good',
                     'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
                 ],
             ],
@@ -36,6 +40,6 @@ class UserAdminChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'bar';
+        return 'line';
     }
 }

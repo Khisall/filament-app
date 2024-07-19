@@ -13,7 +13,7 @@ class ReportAdminChart extends ChartWidget
 
     protected static ?int $sort = 3;
 
-    protected static string $color = 'warning';
+    protected static string $color = 'success';
 
     protected function getData(): array
     {
@@ -38,6 +38,6 @@ class ReportAdminChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 }

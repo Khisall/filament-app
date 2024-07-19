@@ -38,16 +38,16 @@ class ReportResource extends Resource
 
     protected static ?string $navigationGroup = 'Report Management';
 
-    protected static ?string $recordTitleAttribute = 'first_name';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return $record->last_name;
+        return $record->name;
     }
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['first_name', 'last_name', 'middle_name'];
+        return ['location.name', 'name', 'remark'];
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -96,23 +96,33 @@ class ReportResource extends Resource
                             ->required()
                             ->maxLength(255),
                     ])->columns(3),
-                Forms\Components\Section::make('Free Obstruction')
+                Forms\Components\Section::make('Checking')
                     ->schema([
-                        Forms\Components\TextInput::make('free_obstruction')
-                            ->required()
-                            ->maxLength(255),
-                    ])->columns(2),
-                Forms\Components\Section::make('Good Condition')
+                        Forms\Components\Select::make('free_obstruction')
+                        ->options([
+                            'NO' => 'No',
+                            'YES' => 'Yes',
+                        ]),
+                        Forms\Components\Select::make('leakage')
+                            ->options([
+                                'NO' => 'No',
+                                'YES' => 'Yes',
+                            ]),
+                        Forms\Components\Select::make('flush_test')
+                            ->options([
+                                'GOOD' => 'GOOD',
+                                'NO GOOD' => 'NO GOOD',
+                            ]),
+                        ]),
+                Forms\Components\Section::make('The Condition')
                     ->schema([
-                        Forms\Components\TextInput::make('condition')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('leakage')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('flush_test')
-                            ->required()
-                            ->maxLength(255),
+                        Forms\Components\Select::make('condition')
+                            ->options([
+                                'GOOD' => 'GOOD',
+                                'NO GOOD' => 'NO GOOD',
+                        ]),
+                        Forms\Components\TextInput::make('remark')
+                        ->requiredIfAccepted('condition'),
                     ])->columns(2),
                 Forms\Components\Section::make('Dates')
                     ->schema([
@@ -120,15 +130,6 @@ class ReportResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->required(),
-                    ])->columns(2),
-                Forms\Components\Section::make('Remark')
-                    ->schema([
-                        Forms\Components\Select::make('remark')
-                        ->options([
-                            'Draft' => 'draft',
-                            'Warning' => 'warning',
-                            'Good' => 'good',
-                        ])
                     ])->columns(2),
                 Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
                     ->columns(1)
@@ -150,29 +151,50 @@ class ReportResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('free_obstruction')
                     ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('condition')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color(function(string $state) : string{
+                        return match ($state) {
+                            'YES' => 'success',
+                            'NO' => 'danger'
+                        };
+                    }),
                 Tables\Columns\TextColumn::make('leakage')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color(function(string $state) : string{
+                        return match ($state) {
+                            'YES' => 'danger',
+                            'NO' => 'success'
+                        };
+                    }),
                 Tables\Columns\TextColumn::make('flush_test')
                     ->sortable()
+                    ->searchable()
+                    ->badge()
+                    ->color(function(string $state) : string{
+                        return match ($state) {
+                            'GOOD' => 'success',
+                            'NO GOOD' => 'danger'
+                        };
+                    }),
+                Tables\Columns\TextColumn::make('condition')
+                    ->sortable()
+                    ->searchable()
+                    ->badge()
+                    ->color(function(string $state) : string{
+                        return match ($state) {
+                            'GOOD' => 'success',
+                            'NO GOOD' => 'danger'
+                        };
+                    }),
+                Tables\Columns\TextColumn::make('remark')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date_of_checking')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('remark')
-                    ->badge()
-                    ->color(function(string $state) : string{
-                        return match ($state) {
-                            'Good' => 'success',
-                            'Draft' => 'info',
-                            'Warning' => 'danger'
-                        };
-                    }),
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('upload'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -255,24 +277,30 @@ class ReportResource extends Resource
                     ])->columns(3),
                 Section::make('Good Condition')
                     ->schema([
-                        TextEntry::make('condition'),
-                        TextEntry::make(
-                            'leakage'
-                        ),
-                        TextEntry::make(
-                            'flush_test'
-                        ),
-                    ])->columns(3),
+                        TextEntry::make('leakage')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'NO' => 'success',
+                                'YES' => 'danger',
+                            }),
+                        TextEntry::make('flush_test')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'GOOD' => 'success',
+                                'NO GOOD' => 'danger',
+                            }),
+                        ])->columns(3),
                 Section::make('Remark')
                     ->schema([
-                        TextEntry::make('remark')
+                        TextEntry::make('condition')
                         ->badge()
                         ->color(fn (string $state): string => match ($state) {
-                            'Good' => 'success',
-                            'Draft' => 'info',
-                            'Warning' => 'danger',
-                        })
-                    ]),
+                            'GOOD' => 'success',
+                            'NO GOOD' => 'danger',
+                        }),
+                        TextEntry::make('remark'),
+                        TextEntry::make('date_of_checking')
+                    ])->columns(2),
                 Section::make('Image')
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('upload')

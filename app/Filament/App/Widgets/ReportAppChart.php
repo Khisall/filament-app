@@ -14,7 +14,7 @@ class ReportAppChart extends ChartWidget
 
     protected static ?int $sort = 3;
 
-    protected static string $color = 'warning';
+    protected static string $color = 'success';
 
     protected function getData(): array
     {

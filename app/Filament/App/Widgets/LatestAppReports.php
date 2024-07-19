@@ -5,6 +5,10 @@ namespace App\Filament\App\Widgets;
 use Filament\Tables;
 use App\Models\Report;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\App\Resources\ReportResource;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class LatestAppReports extends BaseWidget
@@ -18,16 +22,19 @@ class LatestAppReports extends BaseWidget
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('location.name'),
-                Tables\Columns\TextColumn::make('name'),
+                TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('remark')
                     ->badge()
                     ->color(function(string $state) : string{
                         return match ($state) {
-                            'Good' => 'success',
-                            'Draft' => 'info',
-                            'Warning' => 'danger'
-                        };
-                    })
+                            'GOOD' => 'success',
+                            'WARNING' => 'danger'
+                            };
+                        })
+                    ])
+                    ->actions([
+                        Action::make('View')
+                        ->url(fn (Report $record): string => ReportResource::getUrl('view',['record' => $record]))
             ]);
     }
 }
