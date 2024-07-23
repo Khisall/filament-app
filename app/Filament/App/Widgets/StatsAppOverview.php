@@ -14,8 +14,8 @@ class StatsAppOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $goodCount = Report::where('remark', 'Good')->count();
-        $warningCount = Report::where('remark', 'Warning')->count();
+        $goodCount = Report::where('condition', 'GOOD')->count();
+        $warningCount = Report::where('condition', 'NO GOOD')->count();
         
         return [
             Card::make('Warning Remarks', $warningCount)

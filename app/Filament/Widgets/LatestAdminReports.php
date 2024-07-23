@@ -4,10 +4,12 @@ namespace App\Filament\Widgets;
 
 use Filament\Tables;
 use App\Models\Report;
-use Filament\Tables\Table;
-use Filament\Tables\Actions\Action;
 use App\Filament\Resources\ReportResource;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Table;
 
 class LatestAdminReports extends BaseWidget
 {
@@ -32,11 +34,28 @@ class LatestAdminReports extends BaseWidget
                             };
                         }),
                 Tables\Columns\TextColumn::make('remark'),
-            ])
+                    ])
             
             ->actions([
-                Action::make('View')
-                ->url(fn (Report $record): string => ReportResource::getUrl('view',['record' => $record]))
+                ViewAction::make()
+                ->form([
+                    TextInput::make('location.name')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('name')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('date_of_checking')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('condition')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('remark')
+                        ->required()
+                        ->maxLength(255),
+
+                ]),
             ]);
     }
 }

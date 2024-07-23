@@ -23,14 +23,16 @@ class LatestAppReports extends BaseWidget
             ->columns([
                 TextColumn::make('location.name'),
                 TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('remark')
+                Tables\Columns\TextColumn::make('condition')
                     ->badge()
                     ->color(function(string $state) : string{
                         return match ($state) {
                             'GOOD' => 'success',
-                            'WARNING' => 'danger'
+                            'NO GOOD' => 'danger'
                             };
-                        })
+                        }),
+                Tables\Columns\TextColumn::make('remark'),
+                Tables\Columns\TextColumn::make('date_of_checking')
                     ])
                     ->actions([
                         Action::make('View')

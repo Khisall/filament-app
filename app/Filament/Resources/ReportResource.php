@@ -134,8 +134,15 @@ class ReportResource extends Resource
                 Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
                     ->columns(1)
                     ->multiple()
-                    ->directory('upload'),   
-
+                    ->directory('upload')
+                    ->downloadable()
+                    ->image()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                        '4:3',
+                        '1:1',   
+                        ])
             ]);
     }
 
@@ -322,7 +329,7 @@ class ReportResource extends Resource
         return [
             'index' => Pages\ListReports::route('/'),
             'create' => Pages\CreateReport::route('/create'),
-            'view' => Pages\ViewReport::route('/{record}'),
+            //'view' => Pages\ViewReport::route('/{record}'),
             'edit' => Pages\EditReport::route('/{record}/edit'),
         ];
     }
