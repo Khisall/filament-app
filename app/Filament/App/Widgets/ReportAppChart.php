@@ -3,10 +3,11 @@
 namespace App\Filament\App\Widgets;
 
 use App\Models\Report;
-use Filament\Facades\Filament;
-use Filament\Widgets\ChartWidget;
+use App\Models\HoseReel;
 use Flowframe\Trend\Trend;
+use Filament\Facades\Filament;
 use Flowframe\Trend\TrendValue;
+use Filament\Widgets\ChartWidget;
 
 class ReportAppChart extends ChartWidget
 {
@@ -18,7 +19,7 @@ class ReportAppChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Trend::query(Report::query()->whereBelongsTo(Filament::getTenant()))
+        $data = Trend::query(HoseReel::query()->whereBelongsTo(Filament::getTenant()))
             ->between(
                 start: now()->startOfMonth(),
                 end: now()->endOfMonth(),

@@ -3,9 +3,10 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Report;
-use Filament\Widgets\ChartWidget;
+use App\Models\HoseReel;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Filament\Widgets\ChartWidget;
 
 class ReportAdminChart extends ChartWidget
 {
@@ -17,12 +18,12 @@ class ReportAdminChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Trend::model(Report::class)
+        $data = Trend::model(HoseReel::class)
             ->between(
-                start: now()->startOfMonth(),
-                end: now()->endOfMonth(),
+                start: now()->startOfYear(),
+                end: now()->endOfYear(),
             )
-            ->perDay()
+            ->perMonth()
             ->count();
 
         return [

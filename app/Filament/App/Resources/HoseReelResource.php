@@ -2,50 +2,36 @@
 
 namespace App\Filament\App\Resources;
 
-use badge;
 use Filament\Forms;
-use App\Models\City;
 use Filament\Tables;
-use App\Models\State;
-use App\Models\Report;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
+use App\Models\HoseReel;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
-use Tables\Columns\ImageColumn;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Forms\Components\FileUpload;
-use Illuminate\Support\Collection;
+use Filament\Infolists\Components\Card;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ImageEntry;
-use Tables\Columns\SpatieMediaLibraryImageColumn;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\ReportResource\Pages;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use App\Filament\App\Resources\ReportResource\RelationManagers;
+use App\Filament\App\Resources\HoseReelResource\Pages;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use App\Filament\App\Resources\HoseReelResource\RelationManagers;
 
-class ReportResource extends Resource
+class HoseReelResource extends Resource
 {
-    protected static ?string $model = Report::class;
+    protected static ?string $model = HoseReel::class;
+
+    public static ?string $tenantRelationshipName = 'hoseReels';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return static::getModel()::count() > 10 ? 'warning' : 'good';
-    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Locations')
+                Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Select::make('location_id')
                             ->relationship(name: 'location', titleAttribute: 'name')
@@ -59,42 +45,69 @@ class ReportResource extends Resource
                             ->preload()
                             ->required(),
                     ])->columns(2),
-                Forms\Components\Section::make('Name')
+                Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                    ])->columns(3),
-                Forms\Components\Section::make('Checking')
+                    ]),
+                Forms\Components\Card::make()
                     ->schema([
-                        Forms\Components\Select::make('free_obstruction')
-                        ->options([
-                            'NO' => 'No',
-                            'YES' => 'Yes',
-                        ]),
-                        Forms\Components\Select::make('leakage')
+                        Forms\Components\Radio::make('free_obstruction')
+                            ->live()
+                            ->required()
                             ->options([
                                 'NO' => 'No',
                                 'YES' => 'Yes',
                             ]),
-                        Forms\Components\Select::make('flush_test')
+                        Forms\Components\TextInput::make('obstruction_remark')
+                            ->nullable()
+                            ->live()
+                            ->hidden(fn (Get $get): bool => $get('free_obstruction') !== 'NO'),
+                    ])->columns(2),
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\Radio::make('leakage')
+                            ->live()
+                            ->required()
+                            ->options([
+                                'NO' => 'No',
+                                'YES' => 'Yes',
+                            ]),
+                        Forms\Components\TextInput::make('leakage_remark')
+                            ->nullable()
+                            ->live()
+                            ->hidden(fn (Get $get): bool => $get('leakage') !== 'YES'),
+                    ])->columns(2),
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\Radio::make('flush_test')
+                            ->live()
+                            ->required()
                             ->options([
                                 'GOOD' => 'GOOD',
                                 'NO GOOD' => 'NO GOOD',
                             ]),
-                        ]),
-                Forms\Components\Section::make('The Condition')
+                        Forms\Components\TextInput::make('flush_remark')
+                            ->nullable()
+                            ->live()
+                            ->hidden(fn (Get $get): bool => $get('flush_test') !== 'NO GOOD'),
+                        ])->columns(2),
+                Forms\Components\Card::make()
                     ->schema([
-                        Forms\Components\Select::make('condition')
+                        Forms\Components\Radio::make('condition')
+                            ->required()
+                            ->live()
                             ->options([
                                 'GOOD' => 'GOOD',
                                 'NO GOOD' => 'NO GOOD',
                         ]),
-                        Forms\Components\TextInput::make('remark')
-                        ->required()
-                        ->maxLength(255),
-                    ])->columns(2),
-                Forms\Components\Section::make('Dates')
+                        Forms\Components\TextInput::make('condition_remark')
+                            ->nullable()
+                            ->live()
+                            ->hidden(fn (Get $get): bool => $get('condition') !== 'NO GOOD'),
+                        ])->columns(2),
+                Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\DatePicker::make('date_of_checking')
                             ->native(false)
@@ -104,8 +117,15 @@ class ReportResource extends Resource
                 Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
                     ->columns(1)
                     ->multiple()
-                    ->directory('upload'),   
-
+                    ->directory('upload')
+                    ->downloadable()
+                    ->image()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                        '4:3',
+                        '1:1',
+                        ])
             ]);
     }
 
@@ -129,6 +149,8 @@ class ReportResource extends Resource
                             'NO' => 'danger'
                         };
                     }),
+                Tables\Columns\TextColumn::make('obstruction_remark')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('leakage')
                     ->sortable()
                     ->searchable()
@@ -139,6 +161,8 @@ class ReportResource extends Resource
                             'NO' => 'success'
                         };
                     }),
+                Tables\Columns\TextColumn::make('leakage_remark')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('flush_test')
                     ->sortable()
                     ->searchable()
@@ -149,6 +173,8 @@ class ReportResource extends Resource
                             'NO GOOD' => 'danger'
                         };
                     }),
+                Tables\Columns\TextColumn::make('flush_remark')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('condition')
                     ->sortable()
                     ->searchable()
@@ -159,7 +185,7 @@ class ReportResource extends Resource
                             'NO GOOD' => 'danger'
                         };
                     }),
-                Tables\Columns\TextColumn::make('remark')
+                Tables\Columns\TextColumn::make('condition_remark')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date_of_checking')
                     ->date()
@@ -185,12 +211,7 @@ class ReportResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make(),
-                    
                 ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
             ]);
     }
 
@@ -198,37 +219,37 @@ class ReportResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Relationships')
+                Card::make()
                     ->schema([
                         TextEntry::make('location.name'),
                         TextEntry::make('maintenance.name'),
                     ])->columns(2),
-                Section::make('Name')
+                Card::make()
                     ->schema([
                         TextEntry::make('name'),
-                    ])->columns(3),
-                Section::make('Good Condition')
+                        TextEntry::make('date_of_checking')
+                    ])->columns(2),
+                Card::make()
                     ->schema([
-                        TextEntry::make('free_obstruction')
-                            ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'NO' => 'danger',
-                                'YES' => 'success',
-                            }),
                         TextEntry::make('leakage')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'NO' => 'success',
                                 'YES' => 'danger',
                             }),
+                        TextEntry::make('leakage_remark'),
+                    ])->columns(2),
+                Card::make()
+                    ->schema([
                         TextEntry::make('flush_test')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'GOOD' => 'success',
                                 'NO GOOD' => 'danger',
                             }),
-                        ])->columns(3),
-                Section::make('Remark')
+                        TextEntry::make('flush_remark'),
+                        ])->columns(2),
+                Card::make()
                     ->schema([
                         TextEntry::make('condition')
                         ->badge()
@@ -236,8 +257,7 @@ class ReportResource extends Resource
                             'GOOD' => 'success',
                             'NO GOOD' => 'danger',
                         }),
-                        TextEntry::make('remark'),
-                        TextEntry::make('date_of_checking')
+                        TextEntry::make('condition_remark'),
                     ])->columns(2),
                 Section::make('Image')
                     ->schema([
@@ -258,10 +278,10 @@ class ReportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListReports::route('/'),
-            'create' => Pages\CreateReport::route('/create'),
-            'view' => Pages\ViewReport::route('/{record}'),
-            'edit' => Pages\EditReport::route('/{record}/edit'),
+            'index' => Pages\ListHoseReels::route('/'),
+            'create' => Pages\CreateHoseReel::route('/create'),
+            'view' => Pages\ViewHoseReel::route('/{record}'),
+            'edit' => Pages\EditHoseReel::route('/{record}/edit'),
         ];
     }
 }

@@ -15,9 +15,19 @@ class Maintenance extends Model
         'name', 'team_id'
     ];
 
-    public function reports(): HasMany
+    public function hoseReels(): HasMany
     {
-        return $this->hasMany(Report::class);
+        return $this->hasMany(HoseReel::class);
+    }
+
+    public function fireextinguisher(): HasMany
+    {
+        return $this->hasMany(FireExtinguisher::class);
+    }
+
+    public function ex_locations(): HasMany
+    {
+        return $this->hasMany(Exlocation::class);
     }
 
     public function team(): BelongsTo

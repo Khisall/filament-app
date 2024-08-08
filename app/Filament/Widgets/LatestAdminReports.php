@@ -4,12 +4,13 @@ namespace App\Filament\Widgets;
 
 use Filament\Tables;
 use App\Models\Report;
+use App\Models\HoseReel;
+use Filament\Tables\Table;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\ReportResource;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Table;
 
 class LatestAdminReports extends BaseWidget
 {
@@ -19,7 +20,7 @@ class LatestAdminReports extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(Report::query())
+            ->query(HoseReel::query())
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('location.name'),
@@ -33,7 +34,7 @@ class LatestAdminReports extends BaseWidget
                                 'NO GOOD' => 'danger'
                             };
                         }),
-                Tables\Columns\TextColumn::make('remark'),
+                Tables\Columns\TextColumn::make('condition_remark'),
                     ])
             
             ->actions([
@@ -51,7 +52,7 @@ class LatestAdminReports extends BaseWidget
                     TextInput::make('condition')
                         ->required()
                         ->maxLength(255),
-                    TextInput::make('remark')
+                    TextInput::make('condition_remark')
                         ->required()
                         ->maxLength(255),
 

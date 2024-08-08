@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Location extends Model
 {
@@ -15,13 +16,14 @@ class Location extends Model
         'code'
     ];
 
-    public function states(): HasMany
+    public function hoseReels(): HasMany
     {
-        return $this->hasMany(State::class);
+        return $this->hasMany(HoseReels::class);
     }
 
-    public function reports(): HasMany
+    public function type(): HasMany
     {
-        return $this->hasMany(Report::class);
+        return $this->hasMany(Type::class);
     }
+    
 }

@@ -4,35 +4,36 @@ namespace App\Filament\Widgets;
 
 use App\Models\User;
 use App\Models\Report;
+use App\Models\HoseReel;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Filament\Widgets\ChartWidget;
 
 class WarningChart extends ChartWidget
 {
-    protected static ?string $heading = 'No Good Chart';
+    protected static ?string $heading = 'No Good $ Good Hose Reel Condition';
 
     protected static ?int $sort = 2;
 
     protected function getData(): array
     {
         
-        $nogood = Trend::query(Report::where('condition', 'NO GOOD'))
+        $nogood = Trend::query(HoseReel::where('condition', 'NO GOOD'))
             ->between(
-                start: now()->startOfMonth(),
-                end: now()->endOfMonth(),
+                start: now()->startOfYear(),
+                end: now()->endOfYear(),
             )
-            ->perDay()
+            ->perMonth()
             ->count();
 
         $goodData = Trend::query(
-                Report::where('condition', 'GOOD')
+            HoseReel::where('condition', 'GOOD')
             )
             ->between(
-                start: now()->startOfMonth(),
-                end: now()->endOfMonth(),
+                start: now()->startOfYear(),
+                end: now()->endOfYear(),
             )
-            ->perDay()
+            ->perMonth()
             ->count();
 
             return [

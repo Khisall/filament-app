@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(LocationSeeder::class);
+        $this->call(ExlocationSeeder::class);
+        $this->call(TypeSeeder::class);
     }
 }

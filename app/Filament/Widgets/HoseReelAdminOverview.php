@@ -6,12 +6,11 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\Report;
 use App\Models\HoseReel;
-use App\Models\FireExtinguisher;
 use Filament\Widgets\StatsOverviewWidget\Card;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
-class FireExtinguisherAdminOverview extends BaseWidget
+class HoseReelAdminOverview extends BaseWidget
 {
     protected function getStats(): array
     {
@@ -19,17 +18,17 @@ class FireExtinguisherAdminOverview extends BaseWidget
         $warningCount = HoseReel::where('condition', 'NO GOOD')->count();
 
         return [
-            Card::make('No Good Remarks', $warningCount)
+            Card::make('Hose Reels Remark', $warningCount)
                 ->description('Total No Good Condition')
                 ->descriptionIcon('heroicon-o-exclamation-circle')
                 ->color('warning'),
-            Card::make('Good Remarks', $goodCount)
+            Card::make('Hose Reels Remark', $goodCount)
                 ->description('Total Good Condition')
                 ->descriptionIcon('heroicon-o-check-circle')
                 ->color('success'),
-            Stat::make('Reports', FireExtinguisher::query()->count())
-                ->description('All reports from the database')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+            Stat::make('Total Report Hose Reels', HoseReel::query()->count())
+                ->description('All reports ')
+                ->descriptionIcon('heroicon-m-clipboard-document-check')
                 ->color('success'),
         ];
     }

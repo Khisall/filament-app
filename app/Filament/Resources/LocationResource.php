@@ -101,8 +101,7 @@ class LocationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            StatesRelationManager::class,
-            ReportsRelationManager::class
+            //
         ];
     }
 

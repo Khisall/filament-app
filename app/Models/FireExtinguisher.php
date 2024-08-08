@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
+use App\Models\Maintenance;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Report extends Model implements HasMedia
+class FireExtinguisher extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'location_id', 'maintenance_id', 'name', 'free_obstruction', 'condition', 'leakage', 'flush_test', 'date_of_checking', 'remark', 'upload',
+        'team_id','ex_locations_id', 'types_id', 'capacity', 'location', 'due_date', 'years', 'maintenance_id', 'name', 'hose', 'seal_pin', 'pressure', 'indicator_condition', 'remark', 'date_of_checking', 'upload',
     ];
 
     protected $casts =[
         'upload' => 'array'
     ];
-
+    
     protected $guarded = [];
 
     public function maintenance(): BelongsTo
@@ -27,9 +28,14 @@ class Report extends Model implements HasMedia
         return $this->belongsTo(Maintenance::class);
     }
 
-    public function location(): BelongsTo
+    public function ex_locations(): BelongsTo
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Exlocation::class);
+    }
+
+    public function types(): BelongsTo
+    {
+        return $this->belongsTo(Type::class);
     }
 
     public function team(): BelongsTo

@@ -11,32 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reports', function (Blueprint $table) {
+        Schema::create('hose_reels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('location_id')->constrained()->cascadeOnDelete();
             $table->foreignId('maintenance_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('free_obstruction');
+            $table->string('obstruction_remark')->nullable();
             $table->string('condition');
+            $table->string('condition_remark')->nullable();
             $table->string('leakage');
+            $table->string('leakage_remark')->nullable();
             $table->string('flush_test');
+            $table->string('flush_remark')->nullable();
             $table->date('date_of_checking');
-            $table->string('remark');
-            $table->string('upload');
+            $table->string('upload')->nullable();
             $table->timestamps();
         });
     }
+
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('reports');
-
-        $report = Report::find($reportId);
-        $report->addMedia($pathToFile)
-            ->toMediaCollection('uploads');
+        Schema::dropIfExists('hose_reels');
     }
 };

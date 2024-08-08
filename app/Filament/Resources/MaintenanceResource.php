@@ -60,7 +60,7 @@ class MaintenanceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('reports_count')->counts('reports'),
+                Tables\Columns\TextColumn::make('reports_count')->counts('hoseReels'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -87,20 +87,21 @@ class MaintenanceResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Section::make('Maintenance Info')
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('reports_count')
-                            ->state(function (Model $record): int {
-                                return $record->reports()->count();
-                            }),
-                    ])->columns(2)
-            ]);
-    }
+    //public static function infolist(Infolist $infolist): Infolist
+    //{
+      //  return $infolist
+      //      ->schema([
+        //        Section::make('Maintenance Info')
+        //            ->schema([
+        //                TextEntry::make('name'),
+        //                TextEntry::make('reports_count')
+          //                  ->state(function (Model $record): int {
+         //                       return 
+         //                       $record->hoseReels()->count();
+         //                   }),
+         //           ])->columns(2)
+        //    ]);
+   // }
 
     public static function getRelations(): array
     {
@@ -115,7 +116,7 @@ class MaintenanceResource extends Resource
             'index' => Pages\ListMaintenances::route('/'),
             'create' => Pages\CreateMaintenance::route('/create'),
             //'view' => Pages\ViewMaintenance::route('/{record}'),
-            'edit' => Pages\EditMaintenance::route('/{record}/edit'),
+            //'edit' => Pages\EditMaintenance::route('/{record}/edit'),
         ];
     }
 }
