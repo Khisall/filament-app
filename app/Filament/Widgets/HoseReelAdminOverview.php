@@ -27,7 +27,7 @@ class HoseReelAdminOverview extends BaseWidget
                 ->descriptionIcon('heroicon-o-check-circle')
                 ->color('success'),
             Stat::make('Total Report Hose Reels', HoseReel::query()->count())
-                ->description('All reports ')
+                ->description('All reports from the database')
                 ->descriptionIcon('heroicon-m-clipboard-document-check')
                 ->color('success'),
         ];

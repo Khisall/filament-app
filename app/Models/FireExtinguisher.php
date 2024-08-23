@@ -14,7 +14,7 @@ class FireExtinguisher extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'team_id','ex_locations_id', 'types_id', 'capacity', 'location', 'due_date', 'years', 'maintenance_id', 'name', 'hose', 'seal_pin', 'pressure', 'indicator_condition', 'remark', 'date_of_checking', 'upload',
+        'team_id','no_map_id', 'types_id', 'capacities_id', 'exfire_locations_id', 'duedates_id', 'years_id', 'maintenance_id', 'name', 'hose', 'hose_remark', 'seal_pin', 'sealpin_remark', 'pressure', 'indicator_condition', 'indicator_remark', 'tube_condition', 'tube_remark', 'date_of_checking', 'upload',
     ];
 
     protected $casts =[
@@ -28,9 +28,14 @@ class FireExtinguisher extends Model implements HasMedia
         return $this->belongsTo(Maintenance::class);
     }
 
-    public function ex_locations(): BelongsTo
+    public function exfire_locations(): BelongsTo
     {
-        return $this->belongsTo(Exlocation::class);
+        return $this->belongsTo(ExfireLocation::class);
+    }
+
+    public function no_map(): BelongsTo
+    {
+        return $this->belongsTo(NoMap::class);
     }
 
     public function types(): BelongsTo
@@ -38,8 +43,23 @@ class FireExtinguisher extends Model implements HasMedia
         return $this->belongsTo(Type::class);
     }
 
+    public function years(): BelongsTo
+    {
+        return $this->belongsTo(Year::class);
+    }
+
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function duedates(): BelongsTo
+    {
+        return $this->belongsTo(Duedate::class);
+    }
+
+    public function capacities(): BelongsTo
+    {
+        return $this->belongsTo(Capacity::class);
     }
 }

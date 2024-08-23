@@ -28,7 +28,7 @@ class LocationResource extends Resource
 
     protected static ?string $modelLabel = 'Reports Location';
 
-    protected static ?string $navigationGroup = 'System Management';
+    protected static ?string $navigationGroup = 'Hose Reel Management';
 
     protected static ?int $navigationSort = 1;
 

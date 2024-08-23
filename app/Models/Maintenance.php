@@ -25,9 +25,9 @@ class Maintenance extends Model
         return $this->hasMany(FireExtinguisher::class);
     }
 
-    public function ex_locations(): HasMany
+    public function no_map(): HasMany
     {
-        return $this->hasMany(Exlocation::class);
+        return $this->hasMany(NoMap::class);
     }
 
     public function team(): BelongsTo

@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TypeResource\Pages;
-use App\Filament\Resources\TypeResource\RelationManagers;
-use App\Models\Type;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\Type;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\TypeResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\TypeResource\RelationManagers;
+use App\Filament\Resources\NoMapResource\RelationManagers\FireExtinguisherRelationManager;
 
 class TypeResource extends Resource
 {
@@ -19,15 +20,19 @@ class TypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-fire';
 
-    protected static ?string $navigationGroup = 'System Management';
+    protected static ?string $navigationLabel = 'Type';
+
+    protected static ?string $navigationGroup = 'Fire Extinguisher Management';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('ex_locations_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('no_map_id')
+                    ->relationship(name: 'no_map', titleAttribute: 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -38,7 +43,7 @@ class TypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('ex_locations_id')
+                Tables\Columns\TextColumn::make('no_map_id')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')

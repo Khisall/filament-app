@@ -193,6 +193,9 @@ class HoseReelResource extends Resource
                 Tables\Columns\TextColumn::make('location.name')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('maintenance.name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

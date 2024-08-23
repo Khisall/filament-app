@@ -25,7 +25,7 @@ class HoseReelResource extends Resource
 
     public static ?string $tenantRelationshipName = 'hoseReels';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function form(Form $form): Form
     {

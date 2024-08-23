@@ -12,23 +12,23 @@ class Type extends Model
     use HasFactory;
     
     protected $fillable = [
-        'ex_locations_id',
+        'no_map_id',
         'name'
     ];
 
-    public function ex_locations(): BelongsTo
+    public function no_map(): BelongsTo
     {
-        return $this->belongsTo(Exlocation::class);
+        return $this->belongsTo(NoMap::class);
     }
 
-    public function fireExtinguisers(): BelongsTo
+    public function fire_extinguishers(): Hasmany
     {
-        return $this->belongsTo(FireExtinguisher::class);
+        return $this->hasMany(FireExtinguisher::class);
     }
 
     public function maintenance(): HasMany
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(Maintenance::class);
     }
 }
     
