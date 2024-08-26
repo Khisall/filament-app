@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('location_id')->constrained()->cascadeOnDelete();
             $table->foreignId('maintenance_id')->constrained()->cascadeOnDelete();
+            //$table->unique(['location_id', 'maintenance_id']);
+            $table->index(['location_id', 'maintenance_id']);
             $table->string('name');
             $table->string('free_obstruction');
             $table->string('obstruction_remark')->nullable();

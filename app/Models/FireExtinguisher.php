@@ -62,4 +62,12 @@ class FireExtinguisher extends Model implements HasMedia
     {
         return $this->belongsTo(Capacity::class);
     }
+
+    public static function rules($id = null)
+    {
+        return [
+            'no_map_id' => 'required|unique:fire_extinguisher,no_map_id,' . $id,
+            // other validation rules...
+        ];
+    }
 }

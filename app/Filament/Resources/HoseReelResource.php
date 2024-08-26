@@ -20,6 +20,7 @@ use Filament\Pages\Actions\ViewAction;
 use Filament\Infolists\Components\Card;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\CreateAction;
@@ -95,13 +96,26 @@ class HoseReelResource extends Resource
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->required(),
+                            ->required()
+                            ->unique(
+                                table: 'hose_reels',
+                                column: 'location_id',
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule, callable $get) => 
+                                    $rule->where('maintenance_id', $get('maintenance_id'))
+                            ),
                         Forms\Components\Select::make('maintenance_id')
                             ->relationship(name: 'maintenance', titleAttribute: 'name')
                             ->searchable()
                             ->preload()
-                            ->required(),
-                    ])->columns(2),
+                            ->required()
+                            ->afterStateUpdated(function (Forms\Components\Select $component, $state) {
+                                $locationComponent = $component->getContainer()->getComponent('location_id');
+                                if ($locationComponent) {
+                                    $locationComponent->validate();
+                                }
+                            })
+                        ])->columns(2),
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')

@@ -37,4 +37,12 @@ class HoseReel extends Model implements HasMedia
     {
         return $this->belongsTo(Team::class);
     }
+
+    public static function rules($id = null)
+    {
+        return [
+            'location_id' => 'required|unique:hose_reels,location_id,' . $id,
+            // other validation rules...
+        ];
+    }
 }

@@ -6,8 +6,13 @@ use Filament\Tables;
 use App\Models\Report;
 use App\Models\HoseReel;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ReportResource;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Filament\Infolists\Components\Actions\Action;
@@ -36,7 +41,41 @@ class HoseReelReports extends BaseWidget
                         }),
                 Tables\Columns\TextColumn::make('condition_remark'),
                     ])
-            
+                    ->filters([
+                        SelectFilter::make('Maintenance')
+                            ->relationship('maintenance', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Filter by Maintenance')
+                            ->indicator('Maintenance'),
+                        Filter::make('created_at')
+                            ->form([
+                                DatePicker::make('created_from'),
+                                DatePicker::make('created_until'),
+                            ])
+                            ->query(function (Builder $query, array $data): Builder {
+                                return $query
+                                    ->when(
+                                        $data['created_from'],
+                                        fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                    )
+                                    ->when(
+                                        $data['created_until'],
+                                        fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                    );
+                            })
+                            ->indicateUsing(function (array $data): array {
+                                $indicators = [];
+                                if ($data['created_from'] ?? null) {
+                                    $indicators['created_from'] = 'Created from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                                }
+                                if ($data['created_until'] ?? null) {
+                                    $indicators['created_until'] = 'Created until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                                }
+        
+                                return $indicators;
+                            }),
+                    ])
             ->actions([
                 ViewAction::make()
                 ->form([

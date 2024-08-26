@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('duedates_id')->default(1);
             $table->foreignId('years_id')->default(1)->constrained()->cascadeOnDelete();
             $table->foreignId('maintenance_id')->constrained()->cascadeOnDelete();
+            //$table->unique(['no_map_id', 'maintenance_id']);
             $table->string('name');
             $table->string('hose');
             $table->string('hose_remark')->nullable();
@@ -31,7 +32,7 @@ return new class extends Migration
             $table->string('indicator_remark')->nullable();
             $table->string('tube_condition');
             $table->string('tube_remark')->nullable();
-            $table->string('date_of_checking');
+            $table->date('date_of_checking');
             $table->string('upload')->nullable();
             $table->timestamps();
         });

@@ -23,6 +23,7 @@ use Tables\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Filament\Tables\Filters\Filter;
 use Filament\Infolists\Components\Card;
+use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,6 +67,13 @@ class FireExtinguisherResource extends Resource
                         ->searchable()
                         ->preload()
                         ->live()
+                        ->unique(
+                            table: 'fire_extinguishers',
+                            column: 'no_map_id',
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule, callable $get) => 
+                                $rule->where('maintenance_id', $get('maintenance_id'))
+                        )
                         ->afterStateUpdated(function ($state, Set $set, Get $get) {
                             // Mengisi otomatis dropdown lainnya berdasarkan pilihan no_map_id
                             $types = Type::where('no_map_id', $state)->first();
@@ -126,7 +134,13 @@ class FireExtinguisherResource extends Resource
                         ->relationship(name: 'maintenance', titleAttribute: 'name')
                         ->searchable()
                         ->preload()
-                        ->required(),
+                        ->required()
+                        ->afterStateUpdated(function (Forms\Components\Select $component, $state) {
+                            $locationComponent = $component->getContainer()->getComponent('no_map_id');
+                            if ($locationComponent) {
+                                $locationComponent->validate();
+                            }
+                        })
                     ])->columns(2),
                 Forms\Components\Card::make()
                     ->schema([

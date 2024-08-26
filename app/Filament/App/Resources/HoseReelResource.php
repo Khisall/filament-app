@@ -8,9 +8,14 @@ use Filament\Forms\Get;
 use App\Models\HoseReel;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Infolists\Components\Card;
+use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -38,13 +43,26 @@ class HoseReelResource extends Resource
                             ->searchable()
                             ->preload()
                             ->live()
-                            ->required(),
+                            ->required()
+                            ->unique(
+                                table: 'hose_reels',
+                                column: 'location_id',
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule, callable $get) => 
+                                    $rule->where('maintenance_id', $get('maintenance_id'))
+                            ),
                         Forms\Components\Select::make('maintenance_id')
                             ->relationship(name: 'maintenance', titleAttribute: 'name')
                             ->searchable()
                             ->preload()
-                            ->required(),
-                    ])->columns(2),
+                            ->required()
+                            ->afterStateUpdated(function (Forms\Components\Select $component, $state) {
+                                $locationComponent = $component->getContainer()->getComponent('location_id');
+                                if ($locationComponent) {
+                                    $locationComponent->validate();
+                                }
+                            })
+                        ])->columns(2),
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -139,6 +157,9 @@ class HoseReelResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('maintenance.name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('free_obstruction')
                     ->sortable()
                     ->searchable()
@@ -202,7 +223,39 @@ class HoseReelResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('Maintenance')
+                    ->relationship('maintenance', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Filter by Maintenance')
+                    ->indicator('Maintenance'),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Created from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Created until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
