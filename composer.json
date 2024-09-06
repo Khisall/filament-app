@@ -21,6 +21,9 @@
         "owenvoke/blade-fontawesome": "^2.6",
         "psr/simple-cache": "2.0",
         "pxlrbt/filament-excel": "^2.3",
+        "spatie/image": "^3.7",
+        "spatie/laravel-image-optimizer": "^1.8",
+        "spatie/laravel-medialibrary": "^11.9",
         "spatie/laravel-permission": "^6.9"
     },
     "require-dev": {

@@ -128,8 +128,8 @@ class HoseReelResource extends Resource
                             ->live()
                             ->required()
                             ->options([
-                                'NO' => 'No',
                                 'YES' => 'Yes',
+                                'NO' => 'No',
                             ]),
                         Forms\Components\TextInput::make('obstruction_remark')
                             ->nullable()
@@ -186,17 +186,13 @@ class HoseReelResource extends Resource
                             ->required(),
                     ])->columns(2),
                 Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
-                    ->columns(1)
-                    ->multiple()
-                    ->directory('upload')
-                    ->downloadable()
-                    ->image()
-                    ->imageEditor()
-                    ->imageEditorAspectRatios([
-                        '16:9',
-                        '4:3',
-                        '1:1',
-                        ])
+                        ->collection('images')
+                        ->disk('public')
+                        ->columns(1)
+                        ->multiple()
+                        ->downloadable()
+                        ->image()
+                        ->conversion('compressed')
             ]);
     }
 
@@ -265,7 +261,10 @@ class HoseReelResource extends Resource
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('upload'),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('upload')
+                    ->disk('public')
+                    ->collection('images')
+                    ->conversion('compressed'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -378,8 +377,11 @@ class HoseReelResource extends Resource
                 Section::make('Image')
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('upload')
-                         ->hiddenLabel()
-                         ->grow(false),
+                            ->hiddenLabel()
+                            ->grow(false)
+                            ->conversion('compressed')
+                            ->disk('public')
+                        ->collection('images'),
                     ])
             ]);
     }

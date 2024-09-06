@@ -188,19 +188,15 @@ class FireExtinguisherResource extends Resource
                                 ->displayFormat('d/m/Y')
                                 ->required(),
                         ])->columns(2),
-                Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
-                    ->columns(1)
-                    ->multiple()
-                    ->directory('upload')
-                    ->downloadable()
-                    ->image()
-                    ->imageEditor()
-                    ->imageEditorAspectRatios([
-                        '16:9',
-                        '4:3',
-                        '1:1',
-                        ])
-            ]);
+                    Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
+                        ->collection('images')
+                        ->disk('public')
+                        ->columns(1)
+                        ->multiple()
+                        ->downloadable()
+                        ->image()
+                        ->conversion('compressed')
+                ]);
     }
 
     public static function table(Table $table): Table
@@ -284,7 +280,10 @@ class FireExtinguisherResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_of_checking')
                     ->searchable(),
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('upload'),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('upload')
+                    ->disk('public')
+                    ->collection('images')
+                    ->conversion('compressed'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -400,8 +399,11 @@ class FireExtinguisherResource extends Resource
                 Section::make('Image')
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('upload')
-                         ->hiddenLabel()
-                         ->grow(false),
+                            ->hiddenLabel()
+                            ->grow(false)
+                            ->conversion('compressed')
+                            ->disk('public')
+                            ->collection('images'),
                     ])
             ]);
     }

@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use Log;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\Conversions\Events\ConversionHasBeenCompletedEvent;
 
 class HoseReel extends Model implements HasMedia
 {
@@ -44,5 +49,24 @@ class HoseReel extends Model implements HasMedia
             'location_id' => 'required|unique:hose_reels,location_id,' . $id,
             // other validation rules...
         ];
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('compressed')
+            ->fit(Fit::Fill, 500, 300)
+            ->nonQueued()
+            ->performOnCollections('images');
+
+            Event::listen(ConversionHasBeenCompletedEvent::class, function (ConversionHasBeenCompletedEvent $event) {
+                $media = $event->media;
+                
+                $originalPath = $media->getPath();
+                
+                if (file_exists($originalPath)) {
+                    unlink($originalPath);
+                } else {
+                }
+            });
     }
 }

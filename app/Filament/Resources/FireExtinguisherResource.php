@@ -216,17 +216,13 @@ class FireExtinguisherResource extends Resource
                                 ->required(),
                         ])->columns(2),
                 Forms\Components\SpatieMediaLibraryFileUpload::make('upload')
+                    ->collection('images')
+                    ->disk('public')
                     ->columns(1)
                     ->multiple()
-                    ->directory('upload')
                     ->downloadable()
                     ->image()
-                    ->imageEditor()
-                    ->imageEditorAspectRatios([
-                        '16:9',
-                        '4:3',
-                        '1:1',
-                        ])
+                    ->conversion('compressed')
             ]);
     }
 
@@ -311,7 +307,10 @@ class FireExtinguisherResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_of_checking')
                     ->searchable(),
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('upload'),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('upload')
+                    ->disk('public')
+                    ->collection('images')
+                    ->conversion('compressed'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -428,7 +427,10 @@ class FireExtinguisherResource extends Resource
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('upload')
                          ->hiddenLabel()
-                         ->grow(false),
+                         ->grow(false)
+                         ->conversion('compressed')
+                         ->disk('public')
+                        ->collection('images'),
                     ])
             ]);
     }
@@ -446,7 +448,7 @@ class FireExtinguisherResource extends Resource
             'index' => Pages\ListFireExtinguishers::route('/'),
             //'create' => Pages\CreateFireExtinguisher::route('/create'),
             //'view' => Pages\ViewFireExtinguisher::route('/{record}'),
-            'edit' => Pages\EditFireExtinguisher::route('/{record}/edit'),
+            //'edit' => Pages\EditFireExtinguisher::route('/{record}/edit'),
         ];
     }
 }
