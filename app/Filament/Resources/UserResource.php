@@ -26,11 +26,6 @@ class UserResource extends Resource
         return static::getModel()::count();
     }
 
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return static::getModel()::count() > 10 ? 'warning' : 'success';
-    }
-
     public static function form(Form $form): Form
     {
         return $form

@@ -12,13 +12,13 @@ class NoMap extends Model
     
     protected $fillable = [
         'name',
-        'code'
+        'code',
+        'type',
+        'capacity',
+        'exfire_location',
+        'year',
+        'duedate',
     ];
-
-    public function types(): HasMany
-    {
-        return $this->hasMany(Type::class);
-    }
 
     public function maintenance(): HasMany
     {
@@ -28,25 +28,5 @@ class NoMap extends Model
     public function fire_extinguishers(): HasMany
     {
         return $this->hasMany(FireExtinguisher::class);
-    }
-
-    public function exfire_location(): HasMany
-    {
-        return $this->hasMany(ExfireLocation::class);
-    }
-
-    public function capacity(): HasMany
-    {
-        return $this->hasMany(Capacity::class);
-    }
-
-    public function years(): HasMany
-    {
-        return $this->hasMany(Year::class);
-    }
-
-    public function duedates(): HasMany
-    {
-        return $this->hasMany(Duedate::class);
     }
 }

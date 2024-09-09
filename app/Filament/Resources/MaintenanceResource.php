@@ -36,11 +36,6 @@ class MaintenanceResource extends Resource
         return static::getModel()::count();
     }
 
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return static::getModel()::count() > 10 ? 'warning' : 'success';
-    }
-
     public static function form(Form $form): Form
     {
         return $form
@@ -60,7 +55,6 @@ class MaintenanceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('reports_count')->counts('hoseReels'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -87,22 +81,6 @@ class MaintenanceResource extends Resource
             ]);
     }
 
-    //public static function infolist(Infolist $infolist): Infolist
-    //{
-      //  return $infolist
-      //      ->schema([
-        //        Section::make('Maintenance Info')
-        //            ->schema([
-        //                TextEntry::make('name'),
-        //                TextEntry::make('reports_count')
-          //                  ->state(function (Model $record): int {
-         //                       return 
-         //                       $record->hoseReels()->count();
-         //                   }),
-         //           ])->columns(2)
-        //    ]);
-   // }
-
     public static function getRelations(): array
     {
         return [
@@ -113,7 +91,7 @@ class MaintenanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMaintenances::route('/'),
+            'index' => Pages\ListMaintenance::route('/'),
             'create' => Pages\CreateMaintenance::route('/create'),
             //'view' => Pages\ViewMaintenance::route('/{record}'),
             //'edit' => Pages\EditMaintenance::route('/{record}/edit'),

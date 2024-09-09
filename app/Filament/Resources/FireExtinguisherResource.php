@@ -6,6 +6,7 @@ use Filament\Forms;
 use App\Models\Type;
 use App\Models\Year;
 use Filament\Tables;
+use App\Models\NoMap;
 use App\Models\Duedate;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -62,74 +63,41 @@ class FireExtinguisherResource extends Resource
             ->schema([
                 Forms\Components\Card::make()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                     ->schema([
-                    Forms\Components\Select::make('no_map_id')
-                        ->relationship(name: 'no_map', titleAttribute: 'name')
+                        Forms\Components\Select::make('no_map_id')
+                        ->label('No Map')
+                        ->options(NoMap::all()->pluck('name', 'id'))
                         ->searchable()
-                        ->preload()
-                        ->live()
-                        ->unique(
-                            table: 'fire_extinguishers',
-                            column: 'no_map_id',
-                            ignoreRecord: true,
-                            modifyRuleUsing: fn (Unique $rule, callable $get) => 
-                                $rule->where('maintenance_id', $get('maintenance_id'))
-                        )
-                        ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                            // Mengisi otomatis dropdown lainnya berdasarkan pilihan no_map_id
-                            $types = Type::where('no_map_id', $state)->first();
-                            $capacities = Capacity::where('no_map_id', $state)->first();
-                            $exfireLocations = ExfireLocation::where('no_map_id', $state)->first();
-                            $duedates = Duedate::where('no_map_id', $state)->first();
-                            $years = Year::where('no_map_id', $state)->first();
-
-                            // Mengatur nilai otomatis
-                            $set('types_id', $types?->id);
-                            $set('capacities_id', $capacities?->id);
-                            $set('exfire_locations_id', $exfireLocations?->id);
-                            $set('duedates_id', $duedates?->id);
-                            $set('years_id', $years?->id);
-                        })
-                        ->required(),
-                    Forms\Components\Select::make('types_id')
-                        ->options(fn (Get $get): Collection => Type::query()
-                            ->where('no_map_id', $get('no_map_id'))
-                            ->pluck('name', 'id'))
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->disabled(),
-                    Forms\Components\Select::make('capacities_id')
-                        ->options(fn (Get $get): Collection => Capacity::query()
-                            ->where('no_map_id', $get('no_map_id'))
-                            ->pluck('name', 'id'))
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->disabled(),
-                    Forms\Components\Select::make('exfire_locations_id')
-                        ->options(fn (Get $get): Collection => ExfireLocation::query()
-                            ->where('no_map_id', $get('no_map_id'))
-                            ->pluck('name', 'id'))
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->disabled(),
-                    Forms\Components\Select::make('duedates_id')
-                        ->options(fn (Get $get): Collection => Duedate::query()
-                            ->where('no_map_id', $get('no_map_id'))
-                            ->pluck('name', 'id'))
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->disabled(),
-                    Forms\Components\Select::make('years_id')
-                        ->options(fn (Get $get): Collection => Year::query()
-                            ->where('no_map_id', $get('no_map_id'))
-                            ->pluck('name', 'id'))
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->disabled(),
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            $noMap = NoMap::find($state);
+                            if ($noMap) {
+                                $set('type', $noMap->type);
+                                $set('capacity', $noMap->capacity);
+                                $set('exfire_location', $noMap->exfire_location);
+                                $set('duedate', $noMap->duedate);
+                                $set('year', $noMap->year);
+                            }
+                        }),
+                    Forms\Components\TextInput::make('type')
+                        ->label('Type')
+                        ->readonly(),
+                        //->disabled(),
+                    Forms\Components\TextInput::make('capacity')
+                        ->label('Capacity')
+                        ->readonly(),
+                        //->disabled(),
+                    Forms\Components\TextInput::make('exfire_location')
+                        ->label('Exfire Location')
+                        ->readonly(),
+                        //->disabled(),
+                    Forms\Components\TextInput::make('duedate')
+                        ->label('Due Date')
+                        ->readonly(),
+                       // ->disabled(),
+                    Forms\Components\TextInput::make('year')
+                        ->label('Year')
+                        ->readonly(),
+                       // ->disabled(),
                     Forms\Components\Select::make('maintenance_id')
                         ->relationship(name: 'maintenance', titleAttribute: 'name')
                         ->searchable()
@@ -232,19 +200,19 @@ class FireExtinguisherResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('no_map.name')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('types.name')
+                Tables\Columns\TextColumn::make('type')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('capacities.name')
+                Tables\Columns\TextColumn::make('capacity')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('exfire_locations.name')
+                Tables\Columns\TextColumn::make('exfire_location')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('duedates.name')
+                Tables\Columns\TextColumn::make('duedate')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('years.name')
+                Tables\Columns\TextColumn::make('year')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('maintenance.name')
                     ->numeric()
@@ -377,11 +345,11 @@ class FireExtinguisherResource extends Resource
                 Card::make()
                     ->schema([
                         TextEntry::make('no_map.name'),
-                        TextEntry::make('types.name'),
-                        TextEntry::make('capacity.name'),
-                        TextEntry::make('location.name'),
-                        TextEntry::make('duedates.name'),
-                        TextEntry::make('years.name'),
+                        TextEntry::make('type'),
+                        TextEntry::make('capacity'),
+                        TextEntry::make('exfire_location'),
+                        TextEntry::make('duedate'),
+                        TextEntry::make('year'),
                         TextEntry::make('maintenance.name'),
                     ])->columns(2),
                 Card::make()

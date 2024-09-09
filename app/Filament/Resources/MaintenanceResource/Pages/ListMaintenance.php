@@ -6,7 +6,7 @@ use App\Filament\Resources\MaintenanceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListMaintenances extends ListRecords
+class ListMaintenance extends ListRecords
 {
     protected static string $resource = MaintenanceResource::class;
 

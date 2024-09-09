@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('no_map_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('types_id')->default(1)->constrained()->cascadeOnDelete();
-            $table->foreignId('capacities_id')->default(1)->constrained()->cascadeOnDelete();
-            $table->foreignId('exfire_locations_id')->default(1)->constrained()->cascadeOnDelete();
-            $table->unsignedBigInteger('duedates_id')->default(1);
-            $table->foreignId('years_id')->default(1)->constrained()->cascadeOnDelete();
+            $table->string('type');
+            $table->string('capacity');
+            $table->string('exfire_location');
+            $table->string('duedate');
+            $table->string('year');
             $table->foreignId('maintenance_id')->constrained()->cascadeOnDelete();
-            //$table->unique(['no_map_id', 'maintenance_id']);
             $table->string('name');
             $table->string('hose');
             $table->string('hose_remark')->nullable();

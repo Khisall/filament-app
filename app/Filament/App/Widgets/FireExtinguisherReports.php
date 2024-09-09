@@ -28,7 +28,7 @@ class FireExtinguisherReports extends BaseWidget
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('no_map.name'),
-                Tables\Columns\TextColumn::make('exfire_locations.name'),
+                Tables\Columns\TextColumn::make('exfire_location'),
                 Tables\Columns\TextColumn::make('maintenance.name'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('date_of_checking'),

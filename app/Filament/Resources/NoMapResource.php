@@ -26,6 +26,11 @@ class NoMapResource extends Resource
 
     protected static ?string $navigationGroup = 'Fire Extinguisher Management';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -34,6 +39,21 @@ class NoMapResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('code')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('type')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('capacity')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('exfire_location')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('duedate')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('year')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -46,6 +66,16 @@ class NoMapResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('code')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('capacity')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('exfire_location')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('duedate')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('year')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

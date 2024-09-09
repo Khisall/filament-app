@@ -24,10 +24,5 @@ class DatabaseSeeder extends Seeder
 
         $this->call(LocationSeeder::class);
         $this->call(NoMapSeeder::class);
-        $this->call(TypeSeeder::class);
-        $this->call(ExfireLocationSeeder::class);
-        $this->call(CapacitySeeder::class);
-        $this->call(DuedateSeeder::class);
-        $this->call(YearSeeder::class);
     }
 }
