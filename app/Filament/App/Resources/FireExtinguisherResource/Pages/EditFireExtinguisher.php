@@ -2,9 +2,10 @@
 
 namespace App\Filament\App\Resources\FireExtinguisherResource\Pages;
 
-use App\Filament\App\Resources\FireExtinguisherResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\App\Resources\FireExtinguisherResource;
 
 class EditFireExtinguisher extends EditRecord
 {
@@ -16,5 +17,13 @@ class EditFireExtinguisher extends EditRecord
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->title('Report updated.')
+            ->body('The Report updated successfully.')
+            ->sendToDatabase(auth()->user());
     }
 }

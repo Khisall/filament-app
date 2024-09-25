@@ -22,8 +22,8 @@ class EditHoseReel extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return Notification::make()
-            ->success()
             ->title('Report updated.')
-            ->body('The Report updated successfully.');
+            ->body('The Report updated successfully.')
+            ->sendToDatabase(auth()->user());
     }
 }

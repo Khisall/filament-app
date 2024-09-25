@@ -374,6 +374,16 @@ class FireExtinguisherResource extends Resource
                             }),
                         TextEntry::make('indicator_remark'),
                     ])->columns(2),
+                Card::make()
+                    ->schema([
+                        TextEntry::make('tube_condition')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'GOOD' => 'success',
+                                'NO GOOD' => 'danger',
+                            }),
+                        TextEntry::make('tube_remark'),
+                    ])->columns(2),
                 Section::make('Image')
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('upload')

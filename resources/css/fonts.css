@@ -1,0 +1,220 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter/Inter_18pt-Bold.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter/inter-greek-400-normal.woff2') format('woff2'),
+         url('../fonts/Inter/inter-greek-400-normal.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter/inter-greek-500-normal.woff2') format('woff2'),
+         url('../fonts/Inter/inter-greek-500-normal.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+ 
+  /* latin */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-latin-400-normal.woff2') format('woff2'),
+         url('../fonts/Inter/inter-latin-400-normal.woff') format('woff');
+  }
+  
+  /* cyrillic */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-cryillic-400-normal.woff2') format('woff2'),
+         url('../fonts/Inter/inter-cryillic-400-normal.woff') format('woff');
+  }
+  
+  /* greek-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-greek-400-normal.woff2') format('woff2'),
+         url('../fonts/Inter/inter-greek-400-normal.woff') format('woff');
+  }
+  
+  /* latin-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-latin-400-normal.woff2') format('woff2'),
+         url('../fonts/Inter/inter-greek-400-normal.woff') format('woff');
+  }
+  
+  /* vietnamese */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-vietnames-400-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-vietnames-400-normal.woff') format('woff');
+  }
+  
+  /* cyrillic-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-cyrillic-ext-400-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-cyrillic-ext-400-normal.woff') format('woff');
+  }
+  
+  /* greek */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-greek-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-greek-500-normal.woff') format('woff');
+  }
+  
+  /* latin */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-latin-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-latin-500-normal.woff') format('woff');
+  }
+  
+  /* cyrillic */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-cyrillic-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-cyrillic-500-normal.woff') format('woff');
+  }
+  
+  /* greek-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-greek-ext-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-greek-ext-500-normal.woff') format('woff');
+  }
+  
+  /* latin-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-latin-ext-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-latin-ext-500-normal.woff') format('woff');
+  }
+  
+  /* vietnamese */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-vietnamese-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-vietnamese-500-normal.woff') format('woff');
+  }
+  
+  /* cyrillic-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-cyrillic-ext-500-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-cyrillic-ext-500-normal.woff') format('woff');
+  }
+  
+  /* greek */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-greek-600-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-greek-600-normal.woff') format('woff');
+  }
+  
+  /* latin */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-latin-600-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-latin-600-normal.woff') format('woff');
+  }
+  
+  /* cyrillic */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-cyrillic-600-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-cyrillic-600-normal.woff') format('woff');
+  }
+  
+  /* greek-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-greek-ext-600-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-greek-ext-600-normal.woff') format('woff');
+  }
+  
+  /* latin-ext */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url('../fonts/Inter/inter-latin-ext-600-normal.woff2') format('woff2'),
+    url('../fonts/Inter/Inter-latin-ext-600-normal.woff') format('woff');
+  }

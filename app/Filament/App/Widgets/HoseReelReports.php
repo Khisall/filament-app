@@ -24,7 +24,7 @@ class HoseReelReports extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(HoseReel::query()->whereBelongsTo(Filament::getTenant()))
+            ->query(HoseReel::query())
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('location.name'),

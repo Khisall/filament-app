@@ -7,9 +7,7 @@
 
     <title>Laravel</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <link href="{{ asset('font/Inter/inter-inter-400-normal.woff2') }}" rel="stylesheet" />
 
     <!-- Styles -->
     <style>
@@ -32,8 +30,8 @@
             line-height: 1.5;
             -webkit-text-size-adjust: 100%;
             -moz-tab-size: 4;
-            tab-size: 4;
-            font-family: Figtree, sans-serif;
+            tab-size: 
+            font-family: Inter, sans-serif;
             font-feature-settings: normal
         }
 

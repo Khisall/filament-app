@@ -14,8 +14,9 @@ class CreateHoseReel extends CreateRecord
     protected function getCreatedNotification(): ?Notification
     {
         return Notification::make()
-            ->success()
             ->title('Report created.')
-            ->body('The Report created successfully.');
+            ->body('The Report created successfully.')
+            ->sendToDatabase(auth()->user())
+            ->send();
     }
 }

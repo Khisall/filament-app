@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->char('code');
-            $table->string('type'); // Add this column
-            $table->string('capacity'); // Add this column
-            $table->string('exfire_location'); // Add this column
-            $table->string('duedate'); // Add this column
-            $table->string('year'); // Add this column
+            $table->string('type');
+            $table->string('capacity');
+            $table->string('exfire_location');
+            $table->string('duedate');
+            $table->string('year');
             $table->timestamps();
         });
     }

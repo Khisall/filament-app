@@ -2,25 +2,27 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Pages\Tenancy\EditTeamProfile;
-use App\Filament\App\Pages\Tenancy\RegisterTeam;
-use App\Models\Team;
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
+use App\Models\Team;
 use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Filament\PanelProvider;
+use Filament\Navigation\MenuItem;
+use Filament\Support\Colors\Color;
+use Filament\Http\Middleware\Authenticate;
+use Filament\FontProviders\LocalFontProvider;
+use Illuminate\Session\Middleware\StartSession;
+use App\Filament\App\Pages\Tenancy\RegisterTeam;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use App\Filament\App\Pages\Tenancy\EditTeamProfile;
+use BondarDe\FilamentLocalAvatar\LocalAvatarProvider;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -39,6 +41,11 @@ class AppPanelProvider extends PanelProvider
                     ->url('/admin')
                     ->visible(fn (): bool => auth()->user()->is_admin)
             ])
+            ->font(
+                'Inter',
+                url: asset('css/fonts.css'),
+                provider: LocalFontProvider::class,
+            )
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Slate,
@@ -48,6 +55,7 @@ class AppPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->favicon(asset('images/favicon.png'))
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
@@ -72,8 +80,10 @@ class AppPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->tenant(Team::class, ownershipRelationship: 'team', slugAttribute: 'slug')
+            ->tenant(Team::class, slugAttribute: 'slug')
             ->tenantRegistration(RegisterTeam::class)
-            ->tenantProfile(EditTeamProfile::class);
+            ->tenantProfile(EditTeamProfile::class)
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('2s');
     }
 }
