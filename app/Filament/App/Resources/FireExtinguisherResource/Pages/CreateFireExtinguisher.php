@@ -25,13 +25,17 @@ class CreateFireExtinguisher extends CreateRecord
     {
         $user = auth()->user();
 
-        $locationName = $fireExtinguisher->location->name;
+        $tube_condition = $fireExtinguisher->tube_condition;
+
+        $name = $fireExtinguisher->name;
+
+        $locationName = $fireExtinguisher->exfire_location;
         
         $createdAt = $fireExtinguisher->created_at->format('d/m/Y H:i');
 
         Notification::make()
             ->title('New Hose Reel Created')
-            ->body("{$user->name} created a Hose Reel Report by'{$fireExtinguisher->name}' in {$locationName} on {$createdAt} with condition: {$tube_condition}.")
+            ->body("{$user->name} created a Fire Extinguisher Report by'{$fireExtinguisher->name}' in {$locationName} on {$createdAt} with condition: {$tube_condition}.")
             ->sendToDatabase($user)
             ->send();
     }

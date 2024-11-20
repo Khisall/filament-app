@@ -32,6 +32,8 @@ class HoseReelResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
+    protected static ?string $navigationGroup = 'Hose Reel Report';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -52,7 +54,7 @@ class HoseReelResource extends Resource
                                     $rule->where('maintenance_id', $get('maintenance_id'))
                             ),
                         Forms\Components\Select::make('maintenance_id')
-                            ->relationship(name: 'maintenance', titleAttribute: 'name')
+                            ->relationship('maintenance', 'name', fn (Builder $query) => $query->where('resource_type', 'hose_reel'))
                             ->searchable()
                             ->preload()
                             ->required()

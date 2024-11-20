@@ -2,20 +2,37 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MaintenanceResource\Pages;
-use App\Filament\Resources\MaintenanceResource\RelationManagers;
-use App\Models\Maintenance;
 use Filament\Forms;
+use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Table;
+use App\Models\Maintenance;
+use Forms\Components\Select;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\MaintenanceResource\Pages;
+use IbrahimBougaoua\FilaProgress\Tables\Columns\ProgressBar;
+use IbrahimBougaoua\FilaProgress\Tables\Columns\CircleProgress;
+use App\Filament\Resources\MaintenanceResource\RelationManagers;
+use App\Filament\Resources\MaintenanceResource\Pages\EditMaintenance;
+use App\Filament\Resources\MaintenanceResource\Pages\ListMaintenance;
+use App\Filament\Resources\MaintenanceResource\Pages\ViewMaintenance;
+use App\Filament\Resources\MaintenanceResource\Pages\CreateMaintenance;
+use IbrahimBougaoua\FilaProgress\Infolists\Components\ProgressBarEntry;
+use IbrahimBougaoua\FilaProgress\Infolists\Components\CircleProgressEntry;
 
 class MaintenanceResource extends Resource
 {
@@ -45,6 +62,19 @@ class MaintenanceResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
+
+                        Forms\Components\Select::make('resource_type')
+                            ->label('Resource Type')
+                            ->options([
+                                'hose_reel' => 'Hose Reel',
+                                'fire_extinguisher' => 'Fire Extinguisher',
+                                'compressor' => 'Compressor',
+                                'sprinkler_pump_system' => 'Sprinkler Pump',
+                                'emergency_light' => 'Emergency Light',
+                                'security_patrol' => 'Security Patrol',
+                            ])
+                            ->required()
+                            ->label('Select Resource Type'),
                     ])
             ]);
     }
@@ -54,18 +84,44 @@ class MaintenanceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                ->sortable()
+                ->searchable(),
+            
+            // Kolom untuk menunjukkan target dan progress
+            Tables\Columns\TextColumn::make('target')
+                ->label('Target')
+                ->getStateUsing(fn ($record) => $record->getTarget()),
+
+            CircleProgress::make('circle')
+                ->getStateUsing(fn ($record) => [
+                    'total' => $record->getTarget(),
+                    'progress' => $record->countItems(),
+                ])
+                ->hideProgressValue(false),
+                
+            ProgressBar::make('bar')
+                ->getStateUsing(fn ($record) => [
+                    'total' => $record->getTarget(),
+                    'progress' => $record->countItems(),
+                ])
+                ->hideProgressValue(false),
+
+            Tables\Columns\TextColumn::make('progress_percentage')
+                ->label('Progress (%)')
+                ->getStateUsing(fn ($record) => number_format($record->getProgress(), 2) . '%')
+                ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('resource_type')
+                    ->label('Resource Type')
+                    ->options([
+                        'hose_reel' => 'Hose Reel',
+                        'fire_extinguisher' => 'Fire Extinguisher',
+                        'compressor' => 'Compressor',
+                        'sprinkler_pump_system' => 'Sprinkler Pump System',
+                        'emergency_light' => 'Emergency Light',
+                        'security_patrol' => 'Security Patrol',
+                    ])
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -79,8 +135,36 @@ class MaintenanceResource extends Resource
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);
-    }
+        }
 
+        public static function infolist(Infolist $infolist): Infolist
+        {
+            return $infolist
+                ->schema([
+            CircleProgressEntry::make('circle')
+                ->getStateUsing(function ($record) {
+                    $total = 51; // Total target Hose Reel
+                    $progress = $record->countItems(); // Jumlah record yang sudah selesai
+                    return [
+                        'total' => $total,
+                        'progress' => $progress,
+                    ];
+                })
+                ->hideProgressValue(false),
+                
+            ProgressBarEntry::make('bar')
+                ->getStateUsing(function ($record) {
+                    $total = 51;
+                    $progress = $record->countItems();
+                    return [
+                        'total' => $total,
+                        'progress' => $progress,
+                    ];
+                })
+                ->hideProgressValue(false),
+                ]);
+        }
+        
     public static function getRelations(): array
     {
         return [

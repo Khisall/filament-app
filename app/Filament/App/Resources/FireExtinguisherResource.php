@@ -13,7 +13,7 @@ use Filament\Forms\Set;
 use App\Models\Capacity;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Forms\Components\Select;
+use Forms\Components\Text;
 use App\Models\ExfireLocation;
 use Illuminate\Support\Carbon;
 use App\Models\FireExtinguisher;
@@ -23,6 +23,8 @@ use Pages\ListFireExtinguishers;
 use Tables\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\Card;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\DatePicker;
@@ -35,6 +37,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\App\Resources\FireExtinguisherResource\Pages;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use RuelLuna\CanvasPointer\Forms\Components\CanvasPointerField;
 use App\Filament\App\Resources\FireExtinguisherResource\RelationManagers;
 
 class FireExtinguisherResource extends Resource
@@ -45,27 +48,87 @@ class FireExtinguisherResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
+    protected static ?string $navigationGroup = 'Fire Extinguisher Report';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+            Forms\Components\Card::make()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                ->schema([
+                    Select::make('status')
+                    ->label('Status')
+                    ->options(collect(FireExtinguisher::getMappingImages())->mapWithKeys(function ($url, $status) {
+                        return [$status => $status]; // Menggunakan nama status sebagai opsi di dropdown
+                    })->toArray())
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        // Ambil array dari fungsi getMappingImages()
+                        $mappingImages = FireExtinguisher::getMappingImages();
+                        
+                        // Cek apakah pilihan ada di array mappingImages
+                        if (isset($mappingImages[$state])) {
+                            // Set URL gambar sesuai pilihan
+                            $set('image_url', $mappingImages[$state]);
+                        } else {
+                            // Jika tidak ada, gunakan gambar default
+                            $set('image_url', asset('images/default-image.png'));
+                        }
+                    }),
+
+                    Textarea::make('image_url')
+                        ->label('Image URL')
+                        ->reactive()
+                        ->disabled(),
+
+                    CanvasPointerField::make('body_points')
+                        ->label('Lay Out Fire Extinguisher')
+                        ->pointRadius(10)
+                        ->imageUrl(fn ($get) => $get('image_url'))
+                        ->width(1170)
+                        ->height(800)
+                        ->required(),
+                ]),
                 Forms\Components\Card::make()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                     ->schema([
                         Forms\Components\Select::make('no_map_id')
-                        ->label('No Map')
-                        ->options(NoMap::all()->pluck('name', 'id'))
-                        ->searchable()
-                        ->reactive()
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            $noMap = NoMap::find($state);
-                            if ($noMap) {
-                                $set('type', $noMap->type);
-                                $set('capacity', $noMap->capacity);
-                                $set('exfire_location', $noMap->exfire_location);
-                                $set('duedate', $noMap->duedate);
-                                $set('year', $noMap->year);
-                            }
-                        }),
+                            ->unique(
+                                table: 'fire_extinguishers',
+                                column: 'no_map_id',
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule, callable $get) =>
+                                    $rule->where('maintenance_id', $get('maintenance_id'))
+                            )
+                            ->label('No Map')
+                            ->options(function (callable $get) {
+                                $maintenanceId = $get('maintenance_id');
+
+                                if ($maintenanceId) {
+                                    // Filter hanya no_map yang belum digunakan untuk maintenance yang sama
+                                    $existingNoMaps = FireExtinguisher::where('maintenance_id', $maintenanceId)
+                                        ->pluck('no_map_id')
+                                        ->toArray();
+
+                                    return NoMap::whereNotIn('id', $existingNoMaps)
+                                        ->pluck('name', 'id');
+                                }
+
+                                // Jika maintenance belum dipilih, kembalikan daftar kosong
+                                return [];
+                            })
+                            ->searchable()
+                            ->reactive()
+                            ->required()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $noMap = NoMap::find($state);
+                                if ($noMap) {
+                                    $set('type', $noMap->type);
+                                    $set('capacity', $noMap->capacity);
+                                    $set('exfire_location', $noMap->exfire_location);
+                                    $set('duedate', $noMap->duedate);
+                                    $set('year', $noMap->year);
+                                }
+                            }),
                     Forms\Components\TextInput::make('type')
                         ->label('Type')
                         ->readonly(),
@@ -82,7 +145,7 @@ class FireExtinguisherResource extends Resource
                         ->label('Year')
                         ->readonly(),
                     Forms\Components\Select::make('maintenance_id')
-                        ->relationship(name: 'maintenance', titleAttribute: 'name')
+                        ->relationship('maintenance', 'name', fn (Builder $query) => $query->where('resource_type', 'fire_extinguisher'))
                         ->searchable()
                         ->preload()
                         ->required()
@@ -96,6 +159,7 @@ class FireExtinguisherResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                     Forms\Components\TextInput::make('name')
+                        ->label('LT Name')
                         ->required()
                         ->maxLength(255),
                     ])->columns(2),
@@ -130,6 +194,7 @@ class FireExtinguisherResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                     Forms\Components\TextInput::make('pressure')
+                        ->label('Pressure/KG')
                         ->required()
                         ->maxLength(255),
                     ]),

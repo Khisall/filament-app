@@ -9,7 +9,6 @@ use App\Models\HoseReel;
 use Filament\Forms\Form;
 use Pages\ListHoseReels;
 use Filament\Tables\Table;
-//use Forms\Components\Card;
 use Illuminate\Support\Carbon;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -105,7 +104,7 @@ class HoseReelResource extends Resource
                                     $rule->where('maintenance_id', $get('maintenance_id'))
                             ),
                         Forms\Components\Select::make('maintenance_id')
-                            ->relationship(name: 'maintenance', titleAttribute: 'name')
+                            ->relationship('maintenance', 'name', fn (Builder $query) => $query->where('resource_type', 'hose_reel'))
                             ->searchable()
                             ->preload()
                             ->required()
@@ -125,6 +124,7 @@ class HoseReelResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Radio::make('free_obstruction')
+                            ->label('Free Obstruction (Tidak ada Penghalang)')
                             ->live()
                             ->required()
                             ->options([
@@ -139,6 +139,7 @@ class HoseReelResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Radio::make('leakage')
+                            ->label('Leakage (Check Nozle, Pipe, Valve, Flexible)')
                             ->live()
                             ->required()
                             ->options([
@@ -153,6 +154,7 @@ class HoseReelResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Radio::make('flush_test')
+                            ->label('Flush Test (Check Water Flow)')
                             ->live()
                             ->required()
                             ->options([
@@ -167,6 +169,7 @@ class HoseReelResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Radio::make('condition')
+                            ->label('Condition (Overall Checking is Good)')
                             ->required()
                             ->live()
                             ->options([
@@ -210,6 +213,8 @@ class HoseReelResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('free_obstruction')
+                    ->label('Free Obstruction (Tidak ada Penghalang)')
+                    ->wrap()
                     ->sortable()
                     ->searchable()
                     ->badge()
@@ -222,6 +227,7 @@ class HoseReelResource extends Resource
                 Tables\Columns\TextColumn::make('obstruction_remark')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('leakage')
+                    ->label('Leakage (Check Nozle, Pipe, Valve, Flexible)')
                     ->sortable()
                     ->searchable()
                     ->badge()
@@ -234,6 +240,8 @@ class HoseReelResource extends Resource
                 Tables\Columns\TextColumn::make('leakage_remark')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('flush_test')
+                    ->label('Flush Test (Check Water Flow)')
+                    ->wrap()
                     ->sortable()
                     ->searchable()
                     ->badge()
@@ -246,6 +254,7 @@ class HoseReelResource extends Resource
                 Tables\Columns\TextColumn::make('flush_remark')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('condition')
+                    ->label('Condition (Overall Checking is Good)')
                     ->sortable()
                     ->searchable()
                     ->badge()
@@ -321,10 +330,8 @@ class HoseReelResource extends Resource
                     )
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                ExportBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make(),
-                ]),
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),

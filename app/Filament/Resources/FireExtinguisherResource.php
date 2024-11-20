@@ -64,6 +64,13 @@ class FireExtinguisherResource extends Resource
                 Forms\Components\Card::make()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                     ->schema([
                         Forms\Components\Select::make('no_map_id')
+                        ->unique(
+                            table: 'fire_extinguishers',
+                            column: 'no_map_id',
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule, callable $get) => 
+                                $rule->where('maintenance_id', $get('maintenance_id'))
+                        )
                         ->label('No Map')
                         ->options(NoMap::all()->pluck('name', 'id'))
                         ->searchable()
@@ -99,7 +106,7 @@ class FireExtinguisherResource extends Resource
                         ->readonly(),
                        // ->disabled(),
                     Forms\Components\Select::make('maintenance_id')
-                        ->relationship(name: 'maintenance', titleAttribute: 'name')
+                        ->relationship('maintenance', 'name', fn (Builder $query) => $query->where('resource_type', 'fire_extinguisher'))
                         ->searchable()
                         ->preload()
                         ->required()
@@ -147,6 +154,7 @@ class FireExtinguisherResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                     Forms\Components\TextInput::make('pressure')
+                        ->label('Pressure/KG')
                         ->required()
                         ->maxLength(255),
                     ]),
@@ -246,6 +254,7 @@ class FireExtinguisherResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pressure')
+                    ->label('Pressure/KG')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('indicator_condition')
                     ->sortable()
@@ -326,13 +335,11 @@ class FireExtinguisherResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-            ])
+                ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                ExportBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make(),
-                ]),
-            ])
+                ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);

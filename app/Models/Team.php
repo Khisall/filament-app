@@ -3,11 +3,17 @@
 namespace App\Models;
 
 
+use App\Models\NoMap;
+use App\Models\HoseReel;
+use App\Models\Compressor;
+use Illuminate\Support\Str;
+use App\Models\EmergencyLight;
+use App\Models\FireExtinguisher;
+use App\Models\SprinklerPumpSystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 
 
 class Team extends Model
@@ -45,5 +51,25 @@ class Team extends Model
     public function maintenancesFE(): HasMany
     {
         return $this->hasMany(HoseReel::class);
+    }
+
+    public function compressor(): HasMany
+    {
+        return $this->hasMany(Compressor::class);
+    }
+
+    public function sprinklerPump(): HasMany
+    {
+        return $this->hasMany(SprinklerPumpSystem::class);
+    }
+
+    public function emergencyLight(): HasMany
+    {
+        return $this->hasMany(EmergencyLight::class);
+    }
+
+    public function securityPatrol(): HasMany
+    {
+        return $this->hasMany(SecurityPatrol::class);
     }
 }

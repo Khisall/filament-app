@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Maintenance;
 use Illuminate\Database\Seeder;
+use Database\Seeders\PatrolCheckSeeder;
+use Database\Seeders\SpinklerPumpSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,5 +25,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(LocationSeeder::class);
         $this->call(NoMapSeeder::class);
+        $this->call(NewCompressorSeeder::class);
+        $this->call(NewSpinklerPumpSeeder::class);
+        $this->call(NewEmergencyLightSeeder::class);
+        $this->call(PatrolCheckSeeder::class);
     }
 }
